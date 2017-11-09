@@ -1,0 +1,67 @@
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+import re
+
+html = urlopen("https://www.apple.com/cn/iphone/compare/")
+bsObj = BeautifulSoup(html, "html.parser")
+text = bsObj.find_all(role="rowgroup")
+
+
+class AppleInfo(object):
+	def __init__(self, name='iphoneX'):
+		self.name = name
+		self.apple_attrs = {"data-content": str(name)}
+
+	def getinfo(self):
+		f.write("\n" + "*" * 40 + "this is " + str(self.name) + "*" * 40 + "\n")
+		for info in text:
+			iphonetype = info.find_all(attrs=self.apple_attrs)
+			for character in iphonetype:
+				useful_info = character.find_all('p')
+				# 匹配 > 与 < 中间的部分
+				useful_info_without_tag = re.search(r'(?<=\>).*(?=\<)', str(useful_info))
+				if useful_info_without_tag is None:
+					pass
+				else:
+					# 将匹配结果中的标签删除
+					pattern = re.compile(r'\<.*\>')
+					final_info = re.sub(pattern, r'', str(useful_info_without_tag.group()))
+					f.write(str(final_info).encode('GBK', 'ignore').decode('GBK'))
+					f.write("\n")
+
+
+iphoneX = AppleInfo()
+iphone8plus = AppleInfo('iphone8plus')
+iphone8 = AppleInfo('iphone8')
+with open("apple_info.txt", 'w') as f:
+	iphoneX.getinfo()
+	iphone8plus.getinfo()
+	iphone8.getinfo()
+
+	# for info in text:
+	# 	iphoneX = info.find_all(attrs={"data-content": "iphoneX"})
+	# 	for character in iphoneX:
+	# 		useful_info = character.find_all('p')
+	# 		f.write(str(useful_info).encode('GBK', 'ignore').decode('GBK'))
+	# 		f.write("\n")
+	# f.write("\n" + "*" * 80 + "\n")
+
+	# for info in text:
+	# 	iphone8plus = info.find_all(attrs={"data-content": "iphone8plus"})
+	# 	for character in iphone8plus:
+	# 		useful_info = character.find_all('p')
+	# 		f.write(str(useful_info).encode('GBK', 'ignore').decode('GBK'))
+	# 		f.write("\n")
+	# f.write("\n" + "*" * 80 + "\n")
+
+	# for info in text:
+	# 	iphone8 = info.find_all(attrs={"data-content": "iphone8"})
+	# 	for character in iphone8:
+	# 		useful_info = character.find_all('p')
+	# 		useful_info_without_tag = re.match(r'\[<p>(.*)</p>\]', str(useful_info))
+	# 		if useful_info_without_tag is None:
+	# 			pass
+	# 		else:
+	# 			f.write(str(useful_info_without_tag.group(1)).encode('GBK', 'ignore').decode('GBK'))
+	# 			f.write("\n")
+	# f.write("\n" + "*" * 80 + "\n")
