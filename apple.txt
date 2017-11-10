@@ -13,7 +13,9 @@ class AppleInfo(object):
 		self.apple_attrs = {"data-content": str(name)}
 
 	def getinfo(self):
-		f.write("\n" + "*" * 40 + "this is " + str(self.name) + "*" * 40 + "\n")
+		note = "this is " + str(self.name)
+		# f.write("\n" + "*" * 40 + "this is " + str(self.name) + "*" * 40 + "\n")
+		f.write("\n" + note.center(80, "-") + "\n")
 		for info in text:
 			iphonetype = info.find_all(attrs=self.apple_attrs)
 			for character in iphonetype:
